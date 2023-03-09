@@ -2,6 +2,7 @@ import {
   Box,
   Center,
   Flex,
+  Icon,
   Input,
   InputGroup,
   InputLeftElement,
@@ -10,8 +11,8 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FaUser, FaLock, FaEye } from "react-icons/fa";
-import { IoMdMail } from "react-icons/io";
+import { EmailIcon, ViewIcon, LockIcon } from "@chakra-ui/icons";
+import { FaUser } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import { Link as ReactLink } from "react-router-dom";
 
@@ -28,20 +29,29 @@ const SignUp = () => {
           px={[0, 10, 20]}
           backgroundColor={{ sm: "none", md: "gray.50" }}
         >
-          <GiBookshelf size={70} color="#f7a027" className="logo" />
-          <Text
-            fontSize={[40, 50]}
-            fontWeight="bold"
-            textAlign="center"
-            textColor="#2c2c2c"
-          >
-            Register
-          </Text>
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Icon
+              as={GiBookshelf}
+              boxSize={70}
+              color="#f7a027"
+              textAlign=""
+              className="logo"
+            />
+
+            <Text
+              fontSize={[40, 50]}
+              fontWeight="bold"
+              textAlign="center"
+              textColor="#2c2c2c"
+            >
+              Login
+            </Text>
+          </Flex>
           <Stack spacing={6} mt={10}>
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<FaUser color="#797878" />}
+                children={<Icon as={FaUser} color="#797878" />}
               />
               <Input
                 type="text"
@@ -54,7 +64,7 @@ const SignUp = () => {
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<IoMdMail color="#797878" />}
+                children={<EmailIcon color="#797878" />}
               />
               <Input
                 type="email"
@@ -67,7 +77,7 @@ const SignUp = () => {
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<FaLock color="#797878" />}
+                children={<LockIcon color="#797878" />}
               />
               <Input
                 type="password"
@@ -76,7 +86,7 @@ const SignUp = () => {
                 boxShadow="sm"
                 placeholder="Password"
               />
-              <InputRightElement children={<FaEye color="#797878" />} />
+              <InputRightElement children={<ViewIcon color="#797878" />} />
             </InputGroup>
           </Stack>
           <Flex direction="column" alignItems="center" justifyContent="center">
@@ -100,7 +110,7 @@ const SignUp = () => {
             <Text mt={5} textColor="#2c2c2c">
               Have an account?
               <Link as={ReactLink} to="/" color="yellow.600">
-                &nbsp;Sign In
+                &nbsp;Login
               </Link>
             </Text>
           </Flex>
