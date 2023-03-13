@@ -25,13 +25,14 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+
 import { EditIcon, DeleteIcon, Search2Icon, AddIcon } from "@chakra-ui/icons";
 import { GiBookshelf, GiBlackBook } from "react-icons/gi";
-import { FiLogOut } from "react-icons/fi";
+import LogoutButton from "../components/Logout";
 
 const Dashboard = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <div>
       <Grid
@@ -76,13 +77,13 @@ const Dashboard = () => {
                 borderRadius={10}
                 _hover={{ backgroundColor: "#fdf0dd" }}
               >
-                <Icon as={FiLogOut} boxSize={25} color="#353535" />
+                <LogoutButton />
                 <Text
                   fontSize={["0", "0", "medium", "large"]}
                   fontWeight="medium"
                   textColor="#353535"
                 >
-                  Logout
+                  Log out
                 </Text>
               </Flex>
             </Flex>
@@ -150,7 +151,7 @@ const Dashboard = () => {
                   </ModalContent>
                 </Modal>
                 <Text display={{ base: "block", sm: "none" }}>
-                  <FiLogOut size={20} color="#353535" />
+                  <LogoutButton />
                 </Text>
 
                 <Image
