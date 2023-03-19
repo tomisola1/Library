@@ -4,7 +4,7 @@ import { Icon } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 
 const LogoutButton = () => {
-  const { logout } = useAuth0();
+  const { logout } = useAuth0(); //To log user out
 
   return (
     <button

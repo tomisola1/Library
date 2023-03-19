@@ -32,6 +32,7 @@ const SignIn = () => {
               Library
             </Text>
             <LoginButton />
+            {/* isAuthenticated is used to check if a user is logged in and if they are the user can access the dashboard*/}
             {isAuthenticated ? (
               <Text color="#e28401" mt={"20px"}>
                 <Link to="/dashboard">

@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Grid,
   Icon,
   Image,
@@ -12,26 +14,81 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
+  Spinner,
+  Textarea,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-
-import { EditIcon, DeleteIcon, Search2Icon, AddIcon } from "@chakra-ui/icons";
+import { Search2Icon, AddIcon } from "@chakra-ui/icons";
 import { GiBookshelf, GiBlackBook } from "react-icons/gi";
 import LogoutButton from "../components/Logout";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { useMutation } from "@apollo/client";
+import { useState } from "react";
+import { ADD_BOOKS, GET_BOOKS } from "../Api/Queries";
+import BookList from "../components/BookList";
 
 const Dashboard = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+  });
+  const { isOpen, onOpen, onClose } = useDisclosure(); //open and clode modal
+  const [createBook, { loading }] = useMutation(ADD_BOOKS, {
+    refetchQueries: [{ query: GET_BOOKS }], //Refresh book list when a book is added
+  });
+  const toast = useToast();
+  const { name, description } = formData;
+
+  //binding with the state
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  if (loading)
+    return (
+      <Spinner
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="#fdddaf"
+        color="#f18e02"
+        size="xl"
+        mx="50%"
+        my="20%"
+      />
+    );
+
+  //Submit the form and create a new book
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      createBook({ variables: { input: { name, description } } });
+      toast({
+        title: "Book created",
+        description: `A new book has been added`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      //close modal once a book is added
+      if (isOpen === true) {
+        onClose();
+      }
+      //empty the input field
+      setFormData({ name: "", description: "" });
+    } catch (error) {
+      console.error(error);
+      return toast({
+        title: `${error.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <div>
@@ -108,7 +165,7 @@ const Dashboard = () => {
                     children={<Search2Icon boxSize={15} color="#6a6a6a" />}
                   />
                   <Input
-                    type="text"
+                    type="search"
                     w={"auto"}
                     variant="filled"
                     placeholder="Search books"
@@ -131,23 +188,47 @@ const Dashboard = () => {
                   <ModalContent>
                     <ModalHeader>Add New Book</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>hi</ModalBody>
+                    <ModalBody mb={4}>
+                      <form onSubmit={handleSubmit}>
+                        <FormControl>
+                          <FormLabel>Book name</FormLabel>
+                          <Input
+                            name="name"
+                            value={`${formData?.name}`}
+                            placeholder="Book name"
+                            minLength={3}
+                            required
+                            onChange={handleInputChange}
+                          />
+                        </FormControl>
 
-                    <ModalFooter>
-                      <Button
-                        p={[4, 4, 5]}
-                        textColor="white"
-                        fontSize={["sm", "sm", "sm", "lg"]}
-                        bgColor="#f5af4c"
-                        _hover={{ bg: "#f7a027" }}
-                        mr={3}
-                      >
-                        Save
-                      </Button>
-                      <Button variant="ghost" onClick={onClose}>
-                        Close
-                      </Button>
-                    </ModalFooter>
+                        <FormControl mt={4} mb={10}>
+                          <FormLabel>Description</FormLabel>
+                          <Textarea
+                            name="description"
+                            value={`${formData?.description}`}
+                            placeholder=" Description"
+                            minLength={3}
+                            required
+                            onChange={handleInputChange}
+                          />
+                        </FormControl>
+                        <Button
+                          p={[4, 4, 5]}
+                          textColor="white"
+                          fontSize={["sm", "sm", "sm", "lg"]}
+                          bgColor="#f5af4c"
+                          _hover={{ bg: "#f7a027" }}
+                          mr={3}
+                          type="submit"
+                        >
+                          Save
+                        </Button>
+                        <Button variant="ghost" onClick={onClose}>
+                          Close
+                        </Button>
+                      </form>
+                    </ModalBody>
                   </ModalContent>
                 </Modal>
                 <Text display={{ base: "block", sm: "none" }}>
@@ -169,35 +250,7 @@ const Dashboard = () => {
               py={5}
               px={[2, 3, 5, 10]}
             >
-              <TableContainer whiteSpace={"break-spaces"} maxWidth={"100%"}>
-                <Table variant="unstyled">
-                  <Thead>
-                    <Tr>
-                      <Th>Title</Th>
-                      <Th>Description</Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr _hover={{ backgroundColor: "#fdf0dd" }}>
-                      <Td>Bridgerton Series: Duke and I</Td>
-                      <Td>A romantic series</Td>
-                      <Td>
-                        <EditIcon boxSize={5} mr={3} />
-                        <DeleteIcon boxSize={5} />
-                      </Td>
-                    </Tr>
-                    <Tr _hover={{ backgroundColor: "#fdf0dd" }}>
-                      <Td>Bridgerton Series: Duke and I</Td>
-                      <Td>A romantic series</Td>
-                      <Td>
-                        <EditIcon boxSize={5} mr={3} />
-                        <DeleteIcon boxSize={5} />
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <BookList />
             </Box>
           </Grid>
         </Box>
@@ -205,5 +258,17 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;
+// Protecting this dashboard route with the withAuthenticationRequired component provided by @auth0/auth0-react library.
+export default withAuthenticationRequired(Dashboard, {
+  onRedirecting: () => (
+    <Spinner
+      thickness="4px"
+      speed="0.65s"
+      emptyColor="#fdddaf"
+      color="#f18e02"
+      size="xl"
+      mx="50%"
+      my="20%"
+    />
+  ),
+});
