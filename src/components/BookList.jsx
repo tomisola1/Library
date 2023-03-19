@@ -135,7 +135,13 @@ const BookList = () => {
           <Tbody>
             {/* Loop through the data to show list of books */}
             {getBooks.data?.getAllBooks.length === 0 ? (
-              <Text textAlign="right" fontSize={30} mt={40}>
+              <Text
+                textAlign="right"
+                fontSize={20}
+                mt={40}
+                ml={40}
+                color="gray.400"
+              >
                 No books created{" "}
               </Text>
             ) : (
